@@ -235,7 +235,7 @@ class booking_releasing_slots extends parking_slots {
     }
 }
 
-public class project
+public class parking_lot_project
 {
     public static void main(String args[])
 	{
