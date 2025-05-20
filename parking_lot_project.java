@@ -80,7 +80,7 @@ class parking_slots
 		System.out.println("Available slots:"+caravialable);
 		System.out.println("Unavailable slots:"+(cars-caravialable));
 		System.out.println("VEHICLES");
-		System.out.println("Available slots:"+truckavailable);
+		System.out.println("Available slots:"+vehicleavailable);
 		System.out.println("Unavailable slots:"+(vehicles-vehicleavailable));
 	}
 }
