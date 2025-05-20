@@ -23,32 +23,11 @@ class parking_slots
     int floor2[] = {1,1,1,2,2,2,2,2,3,3,3,3,3,3,3};
     int floor3[] = {1,1,1,2,2,2,2,2,3,3,3,3,3,3,3};
     int[][] floors = {floor0, floor1, floor2, floor3};
-    int slot[] = new int[4]; // to store no of slots in each floor
-    int truck[] = new int[4]; // to store slots for truck in each floor
-    int car[] = new int[4];   // to store slots for cars in each floor
-    int vehicle[] = new int[4]; // to store slots for vehicles in each floor
+    int slot[] = {20,20,15,15}; // to store no of slots in each floor
+    int truck[] = {5,5,3,3}; // to store slots for truck in each floor
+    int car[] = {7,7,5,5};   // to store slots for cars in each floor
+    int vehicle[] ={8,8,7,7}; // to store slots for vehicles in each floor
     int unavailable[] = new int[4];
-
-    public void slots()
-	{
-        slot[0] = 20;
-        slot[1] = 20;
-        slot[2] = 15;
-        slot[3] = 15;
-        truck[0] = 5;
-        truck[1] = 5;
-        truck[2] = 3;
-		truck[3] = 3;
-		
-        car[0] = 7;
-        car[1] = 7;
-        car[2] = 5;
-        car[3] = 5;
-        vehicle[0] = 8;
-        vehicle[1] = 8;
-        vehicle[2] = 7;
-        vehicle[3] = 7;
-    }
 
     public void display_slots()
 	{
@@ -235,7 +214,7 @@ class booking_releasing_slots extends parking_slots {
     }
 }
 
-public class parking_lot_project
+public class project
 {
     public static void main(String args[])
 	{
@@ -243,7 +222,6 @@ public class parking_lot_project
         System.out.println("welcome to Parking lot of SCE");
         desc_parking_lot desc = new desc_parking_lot();
         booking_releasing_slots b = new booking_releasing_slots();
-        b.slots();
         while (true) 
 		{
             System.out.println("-------------------------------------------");
