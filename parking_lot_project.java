@@ -1,17 +1,23 @@
 import java.util.*;
-class desc_parking_lot {
+import java.time.LocalTime;
+import java.time.Duration;
+
+class desc_parking_lot
+{
     String name = "SCE";
     String parking_id = "PID108";
     int no_of_floors = 4;
 
-    public void display_details() {
+    public void display_details()
+	{
         System.out.println("Parking Lot Name:" + name);
         System.out.println("Parking Lot ID:" + parking_id);
         System.out.println("Total No of Floors:" + no_of_floors);
     }
 }
 
-class parking_slots {
+class parking_slots
+{	int trucks=16,cars=24,vehicles=30;
     int floor0[] = {1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3};
     int floor1[] = {1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3};
     int floor2[] = {1,1,1,2,2,2,2,2,3,3,3,3,3,3,3};
@@ -23,7 +29,8 @@ class parking_slots {
     int vehicle[] = new int[4]; // to store slots for vehicles in each floor
     int unavailable[] = new int[4];
 
-    public void slots() {
+    public void slots()
+	{
         slot[0] = 20;
         slot[1] = 20;
         slot[2] = 15;
@@ -31,7 +38,8 @@ class parking_slots {
         truck[0] = 5;
         truck[1] = 5;
         truck[2] = 3;
-        truck[3] = 3;
+		truck[3] = 3;
+		
         car[0] = 7;
         car[1] = 7;
         car[2] = 5;
@@ -42,8 +50,10 @@ class parking_slots {
         vehicle[3] = 7;
     }
 
-    public void display_slots() {
-        for (int i = 0; i < 4; i++) {
+    public void display_slots()
+	{
+        for (int i = 0; i < 4; i++) 
+		{
             System.out.println("floor " + i);
             System.out.println("total no of slots:" + slot[i]);
             unavailable[i] = slot[i] - (truck[i] + car[i] + vehicle[i]);
@@ -54,8 +64,26 @@ class parking_slots {
             System.out.println("slots for vehicle:" + vehicle[i]);
         }
     }
+	public void statusOfSlots()
+	{	int truckavailable=0,caravialable=0,vehicleavailable=0;
+		for(int i=0;i<4;i++)
+		{
+			truckavailable+=truck[i];
+			caravialable+=car[i];
+			vehicleavailable+=vehicle[i];
+		}
+		System.out.println("Status Of The Slots");
+		System.out.println("TRUCKS");
+		System.out.println("Available slots:"+truckavailable);
+		System.out.println("Unavailable slots:"+(trucks-truckavailable));
+		System.out.println("CARS");
+		System.out.println("Available slots:"+caravialable);
+		System.out.println("Unavailable slots:"+(cars-caravialable));
+		System.out.println("VEHICLES");
+		System.out.println("Available slots:"+truckavailable);
+		System.out.println("Unavailable slots:"+(vehicles-vehicleavailable));
+	}
 }
-
 class booking_releasing_slots extends parking_slots {
     ArrayList<String> ticketNumber = new ArrayList<String>();
     HashMap<String, String> ticketOwnerDetails = new HashMap<String, String>();
@@ -65,186 +93,193 @@ class booking_releasing_slots extends parking_slots {
     String vehicleNumber;
     String vehicleType;
     String color;
+	LocalTime entryTime;
+    LocalTime exitTime;
     int value = 0;
     int flag=0;
     String ticket = "";
     Scanner sc = new Scanner(System.in);
 
-    public void booking() {
+	public void booking()
+	{
         System.out.println("Enter the name of the vehicle owner:");
-        this.name = sc.next();
+     	this.name = sc.next();
         System.out.println("Enter the vehicle number:");
         this.vehicleNumber = sc.next();
         System.out.println("Enter the vehicle type (truck/car/vehicle):");
         this.vehicleType = sc.next();
         System.out.println("Enter the color of the vehicle:");
         this.color = sc.next();
-
-        switch (vehicleType) {
-            case "truck":
-                value = 1;
-                flag = 0;
-                for (int i = 0; i < 4; i++) {
-                    for (int j = 0; j < 20; j++) {
-                        if (floors[i][j] == value) {
-                            floor_no = i;
-                            slot_no = j;
-                            flag = 1;
-                            truck[i] -= 1;
-                            floors[i][j] = 0;
-                            break;
-                        }
-                    }
-                    if (flag == 1) break;
+		entryTime = LocalTime.now(); // record entry time
+		flag=0;
+		switch(vehicleType)
+		{
+			case "truck":
+				value=1;
+				slot_booking(value);
+				truck[floor_no]-= 1;
+				break;
+			case "car":
+				value=2;
+				slot_booking(value);
+				car[floor_no]-=1;
+				break;
+			case "vehicle":
+				value=3;
+				slot_booking(value);
+				vehicle[floor_no]-=1;
+				break;
+			default:
+				System.out.println("Invalid Vehicle Type!...");
+		}
+			       
+	}
+	public void slot_booking(int value)
+	{
+		this.value=value;
+		for (int i = 0; i < 4; i++)
+		{
+        	for (int j = 0; j < 20; j++) 
+			{
+            	if (floors[i][j] == value)
+				{
+                	floor_no = i;
+                    slot_no = j;
+                    flag = 1;
+                    
+                    floors[i][j] = 0;
+                    break;
                 }
-                if (flag != 1)
-                    System.out.println("slots full");
-                else {
-                    ticket = "PID108" + "_1_" + floor_no + "_" + slot_no;
-                    ticketNumber.add(ticket);
-                    String details = "Owner: " + name + ", Vehicle No: " + vehicleNumber + ", Type: " + vehicleType + ", Color: " + color;
-                    ticketOwnerDetails.put(ticket, details);
-                    System.out.println("Ticket number:" + ticket);
-                    System.out.println("Amount to be paid: Rs100");
-                }
-                break;
-            case "car":
-                value = 2;
-                flag = 0;
-                for (int i = 0; i < 4; i++) {
-                    for (int j = 0; j < 20; j++) {
-                        if (floors[i][j] == value) {
-                            floor_no = i;
-                            slot_no = j;
-                            flag = 1;
-                            car[i] -= 1;
-                            floors[i][j] = 0;
-                            break;
-                        }
-                    }
-                    if (flag == 1) break;
-                }
-                if (flag != 1)
-                    System.out.println("slots full");
-                else {
-                    ticket = "PID108" + "_2_" + floor_no + "_" + slot_no;
-                    ticketNumber.add(ticket);
-                    String details = "Owner: " + name + ", Vehicle No: " + vehicleNumber + ", Type: " + vehicleType + ", Color: " + color;
-                    ticketOwnerDetails.put(ticket, details);
-                    System.out.println("Ticket number:" + ticket);
-                    System.out.println("Amount to be paid: Rs50");
-                }
-                break;
-            case "vehicle":
-                value = 3;
-                flag = 0;
-                for (int i = 0; i < 4; i++) {
-                    for (int j = 0; j < 20; j++) {
-                        if (floors[i][j] == value) {
-                            floor_no = i;
-                            slot_no = j;
-                            flag = 1;
-                            truck[i] -= 1;
-                            floors[i][j] = 0;
-                            break;
-                        }
-                    }
-                    if (flag == 1) break;
-                }
-                if (flag != 1)
-                    System.out.println("slots full");
-                else {
-                    ticket = "PID108" + "_3_" + floor_no + "_" + slot_no;
-                    ticketNumber.add(ticket);
-                    String details = "Owner: " + name + ", Vehicle No: " + vehicleNumber + ", Type: " + vehicleType + ", Color: " + color;
-                    ticketOwnerDetails.put(ticket, details);
-                    System.out.println("Ticket number:" + ticket);
-                    System.out.println("Amount to be paid: Rs30");
-                }
-                break;
-            default:
-                System.out.println("Invalid Vehicle Type!...");
-                break;
+             }
+             if (flag == 1) break;
+		}
+        if (flag != 1)
+        	System.out.println("slots full");
+        else 
+		{
+			ticket = "PID108" + "_"+value+"_" + floor_no + "_" + slot_no;
+            ticketNumber.add(ticket);
+			exitTime = LocalTime.now(); // record exit time
+            String details = "Owner: " + name + ", Vehicle No: " + vehicleNumber + ", Type: " + vehicleType + ", Color: " + color;
+            ticketOwnerDetails.put(ticket, details);
+            System.out.println("Ticket number:" + ticket);
+			
         }
-    }
-
-    public void Releasing() {
+	}
+	
+    public void Releasing()
+	{
         System.out.println("Enter the ticket number:");
         String ticket = sc.next();
-        System.out.println("Owner Details: " + ticketOwnerDetails.get(ticket));
+		int amt=0,hrs=0;
+		System.out.println("Owner Details: " + ticketOwnerDetails.get(ticket));
+		System.out.println("Enter total hours:");
+		Duration duration = Duration.between(entryTime, exitTime);
+        hrs = (int) Math.ceil(duration.toMinutes() / 60.0); // calculate hours
+        
         int index = ticketNumber.indexOf(ticket);
-        if (index != -1) {
+        if (index != -1)
+		{
             String[] parts = ticket.split("_");
             int vehicle_type = Integer.parseInt(parts[1]);
             int floor_no = Integer.parseInt(parts[2]);
             int slot_no = Integer.parseInt(parts[3]);
-            if (vehicle_type == 1) {
+            if (vehicle_type == 1)
+			{
                 truck[floor_no] += 1;
                 floors[floor_no][slot_no] = 1;
-            } else if (vehicle_type == 2) {
+				amt=100; //for 1st hr
+			}	
+            else if (vehicle_type == 2) 
+			{
                 car[floor_no] += 1;
                 floors[floor_no][slot_no] = 2;
-            } else if (vehicle_type == 3) {
+				amt=50; //for 1st hr
+            } 
+			else if (vehicle_type == 3) 
+			{
                 vehicle[floor_no] += 1;
                 floors[floor_no][slot_no] = 3;
+				amt=30;  //for 1st hr
             }
+			//assuming 20rs for extra 1 hr for all types of vehicles
+			while(hrs>1)
+			{
+				amt+=20;
+				hrs-=1;
+			}
             ticketNumber.remove(index);
             ticketOwnerDetails.remove(ticket);
             System.out.println("Ticket released successfully!");
-        } else {
+			System.out.println("amount to be paid:"+amt);
+        
+		} 
+		else 
+		{
             System.out.println("Invalid Ticket Number!...");
         }
     }
 
-    public void displayOwnerDetails() {
+    public void displayOwnerDetails() 
+	{
         System.out.println("Enter the ticket number:");
         String ticket = sc.next();
         String details = ticketOwnerDetails.get(ticket);
-        if (details != null) {
+        if (details != null) 
+		{
             System.out.println("Owner Details: " + details);
-        } else {
+        } else 
+		{
             System.out.println("Invalid Ticket Number!...");
         }
     }
 }
 
-public class parking_lot_project {
-    public static void main(String args[]) {
+public class project
+{
+    public static void main(String args[])
+	{
         int choice = 0;
         System.out.println("welcome to Parking lot of SCE");
         desc_parking_lot desc = new desc_parking_lot();
         booking_releasing_slots b = new booking_releasing_slots();
         b.slots();
-        while (true) {
+        while (true) 
+		{
             System.out.println("-------------------------------------------");
             System.out.println("menu");
             System.out.println("1--> Booking a slot(parking)");
             System.out.println("2--> Releasing the slot(unparking)");
-            System.out.println("3--> Status of slots");
-            System.out.println("4--> Description of Parking Lot");
-            System.out.println("5--> Display Owner Details by Ticket Number");
-            System.out.println("6--> Exit");
+			System.out.println("3--> status of slots");
+            System.out.println("4--> Summary of slots");
+            System.out.println("5--> Description of Parking Lot");
+            System.out.println("6--> Display Owner Details by Ticket Number");
+            System.out.println("7--> Exit");
             System.out.println("Enter your choice:");
             Scanner sc = new Scanner(System.in);
             choice = sc.nextInt();
             System.out.println("-------------------------------------------");
-            switch (choice) {
+            switch (choice)
+			{
                 case 1:
                     b.booking();
                     break;
                 case 2:
                     b.Releasing();
                     break;
-                case 3:
+				case 3:
+					b.statusOfSlots();
+					break;
+                case 4:
                     b.display_slots();
                     break;
-                case 4:
+                case 5:
                     desc.display_details();
                     break;
-                case 5:
+                case 6:
                     b.displayOwnerDetails();
                     break;
-                case 6:
+                case 7:
                     System.exit(0);
                     break;
                 
